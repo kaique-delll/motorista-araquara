@@ -9,7 +9,7 @@
     <!-- FontAwesome icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <script>
         tailwind.config = {
@@ -42,27 +42,27 @@
 </head>
 <body class="bg-slate-100 text-slate-800 antialiased min-h-screen flex flex-col">
 
-    <!-- TELA DE LOGIN & CADASTRO DE USUÁRIOS -->
-    <div id="auth-screen" class="fixed inset-0 bg-slate-900 flex items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 border border-slate-200">
+    <!-- TELA DE AUTENTICAÇÃO (LOGIN / CADASTRO) -->
+    <div id="auth-screen" class="fixed inset-0 bg-slate-900 flex items-center justify-center p-4 z-50 overflow-y-auto">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 sm:p-8 border border-slate-200 my-auto">
             <div class="text-center mb-6">
                 <div class="w-16 h-16 bg-brand-900 text-yellow-400 rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-lg text-2xl">
                     <i class="fa-solid fa-truck-fast"></i>
                 </div>
-                <h2 class="text-2xl font-bold text-slate-900">NOVA MEGA G</h2>
-                <p class="text-xs text-slate-500 font-medium tracking-wide uppercase mt-1">Manutenção • Frota Própria (Casa)</p>
+                <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">NOVA MEGA G</h2>
+                <p class="text-xs text-slate-500 font-semibold tracking-wider uppercase mt-1">Frota Própria (Casa) • Manutenção</p>
             </div>
 
-            <!-- NAVEGAÇÃO ENTRE LOGIN E CADASTRO -->
+            <!-- NAVEGAÇÃO ENTRE ENTAR E NOVO CADASTRO -->
             <div class="flex border-b border-slate-200 mb-6 text-sm font-semibold text-center">
-                <button id="tab-login-btn" onclick="switchAuthTab('login')" class="w-1/2 py-2 border-b-2 border-brand-900 text-brand-900 font-bold transition">Entrar</button>
-                <button id="tab-register-btn" onclick="switchAuthTab('register')" class="w-1/2 py-2 border-b-2 border-transparent text-slate-400 hover:text-slate-600 transition">Novo Cadastro</button>
+                <button id="tab-login-btn" onclick="switchAuthTab('login')" class="w-1/2 py-2.5 border-b-2 border-brand-900 text-brand-900 font-bold transition">Entrar</button>
+                <button id="tab-register-btn" onclick="switchAuthTab('register')" class="w-1/2 py-2.5 border-b-2 border-transparent text-slate-400 hover:text-slate-600 transition">Criar Conta</button>
             </div>
 
             <!-- FORMULÁRIO DE LOGIN -->
             <form id="form-login" onsubmit="handleLogin(event)" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">E-mail</label>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">E-mail</label>
                     <div class="relative">
                         <i class="fa-solid fa-envelope absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
                         <input type="email" id="login-email" required placeholder="seu.email@megag.com.br" class="w-full pl-9 pr-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
@@ -70,14 +70,14 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Senha</label>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Senha</label>
                     <div class="relative">
                         <i class="fa-solid fa-lock absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
                         <input type="password" id="login-password" required placeholder="••••••••" class="w-full pl-9 pr-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
                     </div>
                 </div>
 
-                <button type="submit" id="btn-submit-login" class="w-full py-3 bg-brand-900 hover:bg-brand-800 text-white font-semibold rounded-lg shadow-md transition flex items-center justify-center gap-2">
+                <button type="submit" id="btn-submit-login" class="w-full py-3 bg-brand-900 hover:bg-brand-800 text-white font-semibold rounded-lg shadow-md transition flex items-center justify-center gap-2 text-sm">
                     <i class="fa-solid fa-right-to-bracket"></i>
                     <span>Acessar Sistema</span>
                 </button>
@@ -86,7 +86,7 @@
             <!-- FORMULÁRIO DE CADASTRO -->
             <form id="form-register" onsubmit="handleRegister(event)" class="space-y-4 hidden">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Nome Completo</label>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nome Completo *</label>
                     <div class="relative">
                         <i class="fa-solid fa-user absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
                         <input type="text" id="reg-name" required placeholder="Nome Completo" class="w-full pl-9 pr-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
@@ -94,7 +94,7 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">E-mail corporativo</label>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">E-mail Corporativo *</label>
                     <div class="relative">
                         <i class="fa-solid fa-envelope absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
                         <input type="email" id="reg-email" required placeholder="nome@megag.com.br" class="w-full pl-9 pr-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
@@ -102,7 +102,7 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Senha</label>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Senha *</label>
                     <div class="relative">
                         <i class="fa-solid fa-lock absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
                         <input type="password" id="reg-password" minlength="4" required placeholder="Crie uma senha" class="w-full pl-9 pr-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
@@ -110,14 +110,14 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Perfil de Acesso</label>
-                    <select id="reg-role" required class="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Perfil de Acesso *</label>
+                    <select id="reg-role" required class="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white font-medium">
                         <option value="driver">🚚 Motorista da Casa</option>
                         <option value="admin">📋 Gestão / Logística (Kaique)</option>
                     </select>
                 </div>
 
-                <button type="submit" id="btn-submit-register" class="w-full py-3 bg-emerald-700 hover:bg-emerald-800 text-white font-semibold rounded-lg shadow-md transition flex items-center justify-center gap-2">
+                <button type="submit" id="btn-submit-register" class="w-full py-3 bg-emerald-700 hover:bg-emerald-800 text-white font-semibold rounded-lg shadow-md transition flex items-center justify-center gap-2 text-sm">
                     <i class="fa-solid fa-user-plus"></i>
                     <span>Cadastrar Usuário</span>
                 </button>
@@ -125,69 +125,70 @@
         </div>
     </div>
 
-    <!-- CABEÇALHO DA APLICAÇÃO -->
+    <!-- CABEÇALHO SUPERIOR DA APLICAÇÃO -->
     <header id="app-header" class="bg-brand-900 text-white shadow-lg sticky top-0 z-30 hidden">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div class="flex items-center space-x-3">
-                <div class="bg-white/10 p-2 rounded-lg backdrop-blur-sm border border-white/20">
+                <div class="bg-white/10 p-2 rounded-xl backdrop-blur-sm border border-white/20">
                     <i class="fa-solid fa-truck-fast text-yellow-400 text-xl"></i>
                 </div>
                 <div>
-                    <h1 class="font-bold text-base sm:text-lg leading-tight">NOVA MEGA G</h1>
-                    <p class="text-[10px] sm:text-xs text-blue-200" id="header-user-badge">Manutenção • Frota Própria</p>
+                    <h1 class="font-extrabold text-base sm:text-lg leading-tight tracking-tight">NOVA MEGA G</h1>
+                    <p class="text-[11px] text-blue-200 font-medium" id="header-user-badge">Frota Própria • Casa</p>
                 </div>
             </div>
 
             <div class="flex items-center space-x-3">
-                <button id="btn-new-report" onclick="openReportModal()" class="bg-yellow-500 hover:bg-yellow-400 text-slate-900 font-semibold px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg shadow text-xs sm:text-sm transition flex items-center gap-2">
-                    <i class="fa-solid fa-plus"></i>
-                    <span>Reportar Defeito</span>
+                <button id="btn-new-report" onclick="openReportModal()" class="bg-yellow-500 hover:bg-yellow-400 text-slate-900 font-bold px-3 py-2 sm:px-4 rounded-xl shadow text-xs sm:text-sm transition flex items-center gap-2">
+                    <i class="fa-solid fa-wrench"></i>
+                    <span class="hidden sm:inline">Reportar Manutenção</span>
+                    <span class="sm:hidden">Reportar</span>
                 </button>
-                <button onclick="logout()" class="text-blue-200 hover:text-white p-2 rounded-lg text-sm" title="Sair">
-                    <i class="fa-solid fa-power-off text-lg"></i>
+                <button onclick="logout()" class="text-blue-200 hover:text-white p-2 rounded-lg text-sm transition" title="Sair do Sistema">
+                    <i class="fa-solid fa-right-from-bracket text-lg"></i>
                 </button>
             </div>
         </div>
     </header>
 
-    <!-- CONTAINER DA GESTÃO / LOGÍSTICA (ADMIN) -->
+    <!-- PAINEL DA GESTÃO / LOGÍSTICA (ADMIN) -->
     <main id="admin-view" class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 hidden">
-        <!-- MÉTRICAS DA FROTA PRÓPRIA -->
+        <!-- CARDS DE MÉTRICAS -->
         <section class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <div class="bg-white p-4 sm:p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+            <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
                 <div>
-                    <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Total Relatórios</p>
-                    <h3 id="stat-total" class="text-2xl sm:text-3xl font-bold text-slate-800 mt-1">0</h3>
+                    <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Total de Chamados</p>
+                    <h3 id="stat-total" class="text-2xl sm:text-3xl font-black text-slate-800 mt-1">0</h3>
                 </div>
                 <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg sm:text-xl">
                     <i class="fa-solid fa-clipboard-list"></i>
                 </div>
             </div>
 
-            <div class="bg-white p-4 sm:p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+            <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
                 <div>
-                    <p class="text-xs font-medium text-amber-600 uppercase tracking-wider">Pendentes</p>
-                    <h3 id="stat-pending" class="text-2xl sm:text-3xl font-bold text-amber-600 mt-1">0</h3>
+                    <p class="text-xs font-bold text-amber-600 uppercase tracking-wider">Pendentes</p>
+                    <h3 id="stat-pending" class="text-2xl sm:text-3xl font-black text-amber-600 mt-1">0</h3>
                 </div>
                 <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-lg sm:text-xl">
                     <i class="fa-solid fa-clock"></i>
                 </div>
             </div>
 
-            <div class="bg-white p-4 sm:p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+            <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
                 <div>
-                    <p class="text-xs font-medium text-blue-600 uppercase tracking-wider">Em Manutenção</p>
-                    <h3 id="stat-in-progress" class="text-2xl sm:text-3xl font-bold text-blue-600 mt-1">0</h3>
+                    <p class="text-xs font-bold text-blue-600 uppercase tracking-wider">Em Oficina</p>
+                    <h3 id="stat-in-progress" class="text-2xl sm:text-3xl font-black text-blue-600 mt-1">0</h3>
                 </div>
                 <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg sm:text-xl">
-                    <i class="fa-solid fa-wrench"></i>
+                    <i class="fa-solid fa-screwdriver-wrench"></i>
                 </div>
             </div>
 
-            <div class="bg-white p-4 sm:p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+            <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
                 <div>
-                    <p class="text-xs font-medium text-emerald-600 uppercase tracking-wider">Pronto / Concluído</p>
-                    <h3 id="stat-completed" class="text-2xl sm:text-3xl font-bold text-emerald-600 mt-1">0</h3>
+                    <p class="text-xs font-bold text-emerald-600 uppercase tracking-wider">Concluídos</p>
+                    <h3 id="stat-completed" class="text-2xl sm:text-3xl font-black text-emerald-600 mt-1">0</h3>
                 </div>
                 <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg sm:text-xl">
                     <i class="fa-solid fa-circle-check"></i>
@@ -195,72 +196,81 @@
             </div>
         </section>
 
-        <!-- BUSCA E FILTROS -->
-        <section class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between">
+        <!-- FILTROS E PESQUISA -->
+        <section class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between">
             <div class="w-full md:w-96 relative">
-                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                <input type="text" id="search-input" oninput="applyFilters()" placeholder="Buscar motorista, placa ou defeito..." class="w-full pl-9 pr-4 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input type="text" id="search-input" oninput="applyFilters()" placeholder="Buscar motorista, placa ou problema..." class="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none">
             </div>
 
             <div class="w-full md:w-auto flex flex-wrap gap-3 items-center">
-                <select id="filter-status" onchange="applyFilters()" class="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none text-slate-700 bg-white">
+                <select id="filter-status" onchange="applyFilters()" class="border border-slate-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none text-slate-700 bg-white font-medium">
                     <option value="ALL">Todos os Status</option>
                     <option value="Pendente">Pendente</option>
                     <option value="Em Manutenção">Em Manutenção</option>
                     <option value="Concluído">Concluído</option>
                 </select>
 
-                <button onclick="resetFilters()" class="px-3 py-2 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition" title="Limpar Filtros">
-                    <i class="fa-solid fa-rotate-left"></i>
+                <select id="filter-urgency" onchange="applyFilters()" class="border border-slate-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none text-slate-700 bg-white font-medium">
+                    <option value="ALL">Todas as Urgências</option>
+                    <option value="Alta">Alta / Parado</option>
+                    <option value="Média">Média</option>
+                    <option value="Baixa">Baixa</option>
+                </select>
+
+                <button onclick="exportDataCSV()" class="px-3.5 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100 border border-slate-300 rounded-xl transition flex items-center gap-2" title="Exportar CSV">
+                    <i class="fa-solid fa-file-csv text-emerald-600 text-base"></i>
+                    <span>Exportar</span>
                 </button>
             </div>
         </section>
 
-        <!-- TABELA DE MANUTENÇÕES -->
-        <section class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+        <!-- TABELA DE MANUTENÇÃO -->
+        <section class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                            <th class="px-4 py-3">Data / Hora</th>
-                            <th class="px-4 py-3">Motorista</th>
-                            <th class="px-4 py-3">Placa & KM</th>
-                            <th class="px-4 py-3">Abastecido?</th>
-                            <th class="px-4 py-3">Manutenção / Defeito</th>
-                            <th class="px-4 py-3 text-center">Status</th>
-                            <th class="px-4 py-3 text-center">Ações</th>
+                        <tr class="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-500 uppercase tracking-wider">
+                            <th class="px-4 py-3.5">Data / Hora</th>
+                            <th class="px-4 py-3.5">Motorista</th>
+                            <th class="px-4 py-3.5">Veículo & KM</th>
+                            <th class="px-4 py-3.5">Tanque</th>
+                            <th class="px-4 py-3.5">Urgência</th>
+                            <th class="px-4 py-3.5">Defeito Reportado</th>
+                            <th class="px-4 py-3.5 text-center">Status</th>
+                            <th class="px-4 py-3.5 text-center">Ações</th>
                         </tr>
                     </thead>
                     <tbody id="maintenance-table-body" class="divide-y divide-slate-200 text-sm">
-                        <!-- Injetado via JS -->
+                        <!-- Injetado via JavaScript -->
                     </tbody>
                 </table>
             </div>
 
             <div id="empty-state" class="hidden text-center py-12">
-                <i class="fa-solid fa-truck border p-4 rounded-full bg-slate-50 text-slate-300 text-4xl mb-3"></i>
-                <h4 class="text-slate-700 font-semibold">Nenhum chamado de manutenção encontrado</h4>
-                <p class="text-slate-500 text-sm mt-1">Nenhum relatório foi cadastrado no Firebase ainda.</p>
+                <i class="fa-solid fa-truck-ramp-box border p-4 rounded-full bg-slate-50 text-slate-300 text-4xl mb-3"></i>
+                <h4 class="text-slate-700 font-bold">Nenhum chamado de manutenção encontrado</h4>
+                <p class="text-slate-500 text-sm mt-1">Os chamados cadastrados pelos motoristas aparecerão em tempo real nesta lista.</p>
             </div>
         </section>
     </main>
 
-    <!-- CONTAINER DA VISÃO DO MOTORISTA -->
-    <main id="driver-view" class="flex-1 max-w-3xl w-full mx-auto px-4 py-6 space-y-6 hidden">
-        <div class="bg-gradient-to-r from-brand-900 to-brand-800 rounded-2xl p-6 text-white shadow-lg">
+    <!-- PAINEL EXCLUSIVO DO MOTORISTA DA CASA -->
+    <main id driver-view" class="flex-1 max-w-3xl w-full mx-auto px-4 py-6 space-y-6 hidden">
+        <div class="bg-gradient-to-r from-brand-900 via-brand-800 to-slate-900 rounded-2xl p-6 text-white shadow-lg">
             <h2 class="text-xl font-bold flex items-center gap-2">
                 <i class="fa-solid fa-hard-hat text-yellow-400"></i>
-                <span>Painel do Motorista da Casa</span>
+                <span>Área do Motorista da Casa</span>
             </h2>
-            <p class="text-xs text-blue-200 mt-1">Abra chamados de manutenção para seu caminhão e confirme o abastecimento no retorno da rota. Salvo diretamente na nuvem.</p>
+            <p class="text-xs text-blue-200 mt-1">Reporte avarias, problemas técnicos ou necessidade de preventiva. Lembre-se de retornar sempre com o caminhão abastecido!</p>
         </div>
 
         <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
             <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-                <h3 class="font-bold text-slate-800 text-base">Minhas Solicitações de Manutenção</h3>
-                <button onclick="openReportModal()" class="bg-yellow-500 hover:bg-yellow-400 text-slate-900 font-semibold px-3 py-1.5 rounded-lg text-xs shadow flex items-center gap-1.5">
+                <h3 class="font-bold text-slate-800 text-base">Meus Relatórios de Manutenção</h3>
+                <button onclick="openReportModal()" class="bg-yellow-500 hover:bg-yellow-400 text-slate-900 font-bold px-3 py-1.5 rounded-xl text-xs shadow flex items-center gap-1.5 transition">
                     <i class="fa-solid fa-plus"></i>
-                    <span>Reportar Agora</span>
+                    <span>Abrir Novo Chamado</span>
                 </button>
             </div>
 
@@ -270,13 +280,13 @@
         </div>
     </main>
 
-    <!-- MODAL FORMULÁRIO DE REPORTAR MANUTENÇÃO -->
+    <!-- MODAL FORMULÁRIO DE MANUTENÇÃO -->
     <div id="report-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full overflow-hidden flex flex-col max-h-[90vh]">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden flex flex-col max-h-[90vh]">
             <div class="bg-brand-900 text-white px-6 py-4 flex items-center justify-between">
                 <h3 id="modal-title" class="font-bold text-lg flex items-center gap-2">
                     <i class="fa-solid fa-wrench text-yellow-400"></i>
-                    <span>Reportar Manutenção da Casa</span>
+                    <span>Nova Solicitação de Manutenção</span>
                 </h3>
                 <button onclick="closeReportModal()" class="text-blue-200 hover:text-white text-xl">
                     <i class="fa-solid fa-xmark"></i>
@@ -287,63 +297,80 @@
                 <input type="hidden" id="entry-id">
 
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Nome do Motorista *</label>
-                    <input type="text" id="driver-name" required placeholder="Seu Nome Completo" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nome do Motorista *</label>
+                    <input type="text" id="driver-name" required placeholder="Seu Nome Completo" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none">
                 </div>
 
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Placa do Veículo *</label>
-                        <input type="text" id="vehicle-plate" required placeholder="ABC-1234" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm uppercase focus:ring-2 focus:ring-blue-500 outline-none">
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Placa do Veículo *</label>
+                        <input type="text" id="vehicle-plate" required placeholder="ABC-1234" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm uppercase font-mono font-bold focus:ring-2 focus:ring-blue-500 outline-none">
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">KM Atual *</label>
-                        <input type="number" id="current-km" required placeholder="Ex: 145000" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">KM Atual *</label>
+                        <input type="number" id="current-km" required placeholder="Ex: 145000" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none">
                     </div>
                 </div>
 
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Tipo de Manutenção *</label>
-                        <select id="service-type" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Tipo de Manutenção *</label>
+                        <select id="service-type" required class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white font-medium">
                             <option value="Preventiva">Preventiva de Rotina</option>
                             <option value="Corretiva">Corretiva / Defeito Mecânico</option>
                             <option value="Teclado Ravex">Trava / Teclado Ravex</option>
                             <option value="Trava Baú">Trava do Baú</option>
                             <option value="Câmeras Baú">Câmeras de Segurança</option>
+                            <option value="Pneus">Pneus / Suspensão</option>
                             <option value="Outros">Outros</option>
                         </select>
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Veículo Abastecido? *</label>
-                        <select id="is-fueled" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white">
-                            <option value="Sim">✅ Sim (Abastecido)</option>
-                            <option value="Não">❌ Não (Necessita Abastecer)</option>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Status de Abastecimento *</label>
+                        <select id="fuel-level" required class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white font-medium">
+                            <option value="Tanque Cheio">✅ Tanque Cheio (Abastecido)</option>
+                            <option value="Meio Tanque">⚠️ Meio Tanque</option>
+                            <option value="Reserva">❌ Reserva (Precisa Abastecer)</option>
                         </select>
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Descrição Detalhada do Problema *</label>
-                    <textarea id="service-description" required rows="3" placeholder="Descreva o defeito, ruídos, travamento de teclados Ravex, travas com falha ou manutenção necessária..." class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
-                </div>
-
-                <div id="admin-status-container" class="hidden">
-                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Status da Manutenção (Gestão)</label>
-                    <select id="status-field" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white">
-                        <option value="Pendente">Pendente</option>
-                        <option value="Em Manutenção">Em Manutenção</option>
-                        <option value="Concluído">Concluído</option>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nível de Urgência *</label>
+                    <select id="urgency-level" required class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white font-medium">
+                        <option value="Baixa">🟢 Baixa (Dá para rodar)</option>
+                        <option value="Média">🟡 Média (Atenção necessária)</option>
+                        <option value="Alta">🔴 Alta / Veículo Imobilizado</option>
                     </select>
                 </div>
 
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Descrição Detalhada do Problema *</label>
+                    <textarea id="service-description" required rows="3" placeholder="Descreva o defeito, ruídos, travamento de teclados Ravex, travas com falha ou manutenção necessária..." class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
+                </div>
+
+                <div id="admin-fields-container" class="hidden space-y-3 pt-2 border-t border-slate-100">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Status da Manutenção (Gestão)</label>
+                        <select id="status-field" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white font-medium">
+                            <option value="Pendente">Pendente</option>
+                            <option value="Em Manutenção">Em Manutenção</option>
+                            <option value="Concluído">Concluído</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Observação da Gestão (Opcional)</label>
+                        <input type="text" id="admin-notes" placeholder="Ex: Agendado na oficina X para amanhã 08h" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                </div>
+
                 <div class="pt-4 border-t border-slate-200 flex justify-end gap-3">
-                    <button type="button" onclick="closeReportModal()" class="px-4 py-2 border border-slate-300 text-slate-700 rounded-lg text-sm hover:bg-slate-100 transition">Cancelar</button>
-                    <button type="submit" id="btn-save-report" class="px-4 py-2 bg-brand-800 text-white rounded-lg text-sm font-semibold hover:bg-brand-900 transition flex items-center gap-2">
+                    <button type="button" onclick="closeReportModal()" class="px-4 py-2 border border-slate-300 text-slate-700 rounded-xl text-sm font-semibold hover:bg-slate-100 transition">Cancelar</button>
+                    <button type="submit" id="btn-save-report" class="px-4 py-2 bg-brand-800 text-white rounded-xl text-sm font-semibold hover:bg-brand-900 transition flex items-center gap-2">
                         <i class="fa-solid fa-cloud-arrow-up"></i>
-                        <span>Salvar no Firebase</span>
+                        <span>Salvar Chamado</span>
                     </button>
                 </div>
             </form>
@@ -351,33 +378,52 @@
     </div>
 
     <!-- TOAST NOTIFICAÇÃO -->
-    <div id="toast" class="fixed bottom-5 right-5 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center gap-3">
+    <div id="toast" class="fixed bottom-5 right-5 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl transform translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center gap-3">
         <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>
-        <span id="toast-message" class="text-sm font-medium">Sucesso!</span>
+        <span id="toast-message" class="text-sm font-medium">Operação realizada com sucesso!</span>
     </div>
 
-    <!-- INTEGRACAO FIREBASE REALTIME FIRESTORE -->
+    <!-- MÓDULO JS COM INTEGRAÇÃO FIREBASE FIRESTORE E FALLBACK LOCAL -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-        // Configurações Globais do Ambiente
+        // Configurações Globais
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'megag-fleet-app';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' 
-            ? JSON.parse(__firebase_config) 
-            : { apiKey: "demo", authDomain: "demo.firebaseapp.com", projectId: "demo" };
+        let firebaseConfig = null;
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+        try {
+            if (typeof __firebase_config !== 'undefined') {
+                firebaseConfig = JSON.parse(__firebase_config);
+            }
+        } catch (e) {
+            console.warn("Configuração Firebase não parseada, usando modo resiliente:", e);
+        }
+
+        let app = null;
+        let auth = null;
+        let db = null;
+        let useFirebase = false;
+
+        if (firebaseConfig && firebaseConfig.projectId && firebaseConfig.projectId !== "demo") {
+            try {
+                app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+                useFirebase = true;
+            } catch (err) {
+                console.warn("Erro ao iniciar Firebase SDK, operando com LocalStorage:", err);
+            }
+        }
 
         let currentUser = null;
         let records = [];
         let unsubscribeStore = null;
 
-        // INICIALIZAÇÃO E AUTENTICAÇÃO FIREBASE
-        async function initFirebase() {
+        // Inicializar Autenticação no Firebase se disponível
+        async function initAuth() {
+            if (!useFirebase || !auth) return;
             try {
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                     await signInWithCustomToken(auth, __initial_auth_token);
@@ -389,16 +435,23 @@
             }
         }
 
-        initFirebase();
+        initAuth();
 
-        onAuthStateChanged(auth, (user) => {
-            if (user && currentUser) {
-                setupRealtimeListener();
-            }
-        });
+        if (useFirebase && auth) {
+            onAuthStateChanged(auth, (user) => {
+                if (user && currentUser) {
+                    setupRealtimeListener();
+                }
+            });
+        }
 
-        // ESCOTA EM TEMPO REAL NO FIRESTORE (PUBLIC DATA STRICT PATH)
+        // ESCOTA EM TEMPO REAL FIRESTORE
         function setupRealtimeListener() {
+            if (!useFirebase || !db) {
+                loadLocalRecords();
+                return;
+            }
+
             if (unsubscribeStore) unsubscribeStore();
 
             const maintCollection = collection(db, 'artifacts', appId, 'public', 'data', 'maintenances');
@@ -412,18 +465,42 @@
                     });
                 });
 
-                if (currentUser?.role === 'admin') {
-                    renderAdminTable();
-                    updateStats();
-                } else if (currentUser?.role === 'driver') {
-                    renderDriverCards();
-                }
+                updateView();
             }, (error) => {
-                console.error("Erro na leitura em tempo real do Firebase:", error);
+                console.error("Erro no listener Firestore, caindo para local:", error);
+                loadLocalRecords();
             });
         }
 
-        // CADASTRO DE NOVOS USUÁRIOS NO FIREBASE
+        // LEITURA LOCAL DE SEGURANÇA (FALLBACK)
+        function loadLocalRecords() {
+            try {
+                const stored = localStorage.getItem('megag_maintenances');
+                records = stored ? JSON.parse(stored) : [];
+            } catch (e) {
+                records = [];
+            }
+            updateView();
+        }
+
+        function saveLocalRecords() {
+            try {
+                localStorage.setItem('megag_maintenances', JSON.stringify(records));
+            } catch (e) {
+                console.error("Erro ao salvar no localStorage", e);
+            }
+        }
+
+        function updateView() {
+            if (currentUser?.role === 'admin') {
+                renderAdminTable();
+                updateStats();
+            } else if (currentUser?.role === 'driver') {
+                renderDriverCards();
+            }
+        }
+
+        // CADASTRO DE NOVO USUÁRIO
         window.handleRegister = async function(e) {
             e.preventDefault();
             const name = document.getElementById('reg-name').value.trim();
@@ -431,51 +508,67 @@
             const password = document.getElementById('reg-password').value;
             const role = document.getElementById('reg-role').value;
 
-            if (!auth.currentUser) {
-                showToast("Conectando ao serviço... tente novamente em instantes.");
-                return;
+            if (useFirebase && db) {
+                try {
+                    const userRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', email);
+                    await setDoc(userRef, {
+                        name,
+                        email,
+                        password,
+                        role,
+                        createdAt: new Date().toISOString()
+                    });
+                } catch (error) {
+                    console.warn("Não foi possível registrar no Firestore, gravando localmente:", error);
+                }
             }
 
-            try {
-                // Registrar perfil na coleção de usuários do Firebase
-                const userRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', email);
-                await setDoc(userRef, {
-                    name,
-                    email,
-                    password, // Salva credencial no Firestore
-                    role,
-                    createdAt: new Date().toISOString()
-                });
+            // Gravar também no localStorage local para login instantâneo
+            const users = JSON.parse(localStorage.getItem('megag_users') || '{}');
+            users[email] = { name, email, password, role };
+            localStorage.setItem('megag_users', JSON.stringify(users));
 
-                showToast("Usuário cadastrado com sucesso!");
-                switchAuthTab('login');
-                document.getElementById('login-email').value = email;
-                document.getElementById('login-password').value = password;
-            } catch (error) {
-                console.error("Erro ao cadastrar usuário:", error);
-                showToast("Erro ao cadastrar usuário. Tente novamente.");
-            }
+            showToast("Usuário cadastrado com sucesso!");
+            switchAuthTab('login');
+            document.getElementById('login-email').value = email;
+            document.getElementById('login-password').value = password;
         };
 
-        // LOGIN DE USUÁRIOS
+        // LOGIN DE USUÁRIO
         window.handleLogin = async function(e) {
             e.preventDefault();
             const email = document.getElementById('login-email').value.trim().toLowerCase();
             const password = document.getElementById('login-password').value;
 
             try {
-                // Verificar credenciais hardcoded rápidas para teste ou consultar Firestore
                 if (email === 'admin@megag.com.br' && password === '123') {
                     currentUser = { name: 'Kaique (Gestão)', email, role: 'admin' };
                 } else if (email === 'motorista@megag.com.br' && password === '123') {
                     currentUser = { name: 'Motorista Padrão', email, role: 'driver' };
                 } else {
-                    const userRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', email);
-                    const userSnap = await getDoc(userRef);
+                    let userFound = null;
 
-                    if (userSnap.exists() && userSnap.data().password === password) {
-                        const data = userSnap.data();
-                        currentUser = { name: data.name, email: data.email, role: data.role };
+                    if (useFirebase && db) {
+                        try {
+                            const userRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', email);
+                            const userSnap = await getDoc(userRef);
+                            if (userSnap.exists() && userSnap.data().password === password) {
+                                userFound = userSnap.data();
+                            }
+                        } catch (err) {
+                            console.warn("Consulta Firestore ignorada, buscando local:", err);
+                        }
+                    }
+
+                    if (!userFound) {
+                        const users = JSON.parse(localStorage.getItem('megag_users') || '{}');
+                        if (users[email] && users[email].password === password) {
+                            userFound = users[email];
+                        }
+                    }
+
+                    if (userFound) {
+                        currentUser = { name: userFound.name, email: userFound.email, role: userFound.role };
                     } else {
                         showToast("E-mail ou senha incorretos!");
                         return;
@@ -490,20 +583,25 @@
                     badge.innerText = `Gestão (${currentUser.name})`;
                     document.getElementById('admin-view').classList.remove('hidden');
                     document.getElementById('driver-view').classList.add('hidden');
-                    document.getElementById('admin-status-container').classList.remove('hidden');
+                    document.getElementById('admin-fields-container').classList.remove('hidden');
                 } else {
                     badge.innerText = `Motorista (${currentUser.name})`;
                     document.getElementById('driver-view').classList.remove('hidden');
                     document.getElementById('admin-view').classList.add('hidden');
-                    document.getElementById('admin-status-container').classList.add('hidden');
+                    document.getElementById('admin-fields-container').classList.add('hidden');
                     document.getElementById('driver-name').value = currentUser.name;
                 }
 
-                setupRealtimeListener();
+                if (useFirebase && db) {
+                    setupRealtimeListener();
+                } else {
+                    loadLocalRecords();
+                }
+
                 showToast(`Bem-vindo, ${currentUser.name}!`);
             } catch (err) {
-                console.error("Erro no login:", err);
-                showToast("Falha ao efetuar login.");
+                console.error("Erro ao realizar login:", err);
+                showToast("Erro durante a autenticação.");
             }
         };
 
@@ -516,20 +614,20 @@
             document.getElementById('driver-view').classList.add('hidden');
         };
 
-        // SALVAR MANUTENÇÃO NO FIREBASE
+        // SALVAR MANUTENÇÃO (FIRESTORE OU LOCALSTORAGE)
         window.handleFormSubmit = async function(e) {
             e.preventDefault();
-
-            if (!auth.currentUser) return;
 
             const id = document.getElementById('entry-id').value;
             const driverName = document.getElementById('driver-name').value.trim();
             const plate = document.getElementById('vehicle-plate').value.trim().toUpperCase();
             const km = document.getElementById('current-km').value;
             const serviceType = document.getElementById('service-type').value;
-            const isFueled = document.getElementById('is-fueled').value;
+            const fuelLevel = document.getElementById('fuel-level').value;
+            const urgency = document.getElementById('urgency-level').value;
             const description = document.getElementById('service-description').value.trim();
             const status = currentUser?.role === 'admin' ? document.getElementById('status-field').value : 'Pendente';
+            const adminNotes = currentUser?.role === 'admin' ? document.getElementById('admin-notes').value.trim() : '';
 
             const payload = {
                 driverName,
@@ -537,57 +635,105 @@
                 plate,
                 km: Number(km),
                 serviceType,
-                isFueled,
+                fuelLevel,
+                urgency,
                 description,
                 status,
+                adminNotes,
                 updatedAt: new Date().toISOString()
             };
 
-            try {
-                if (id) {
-                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'maintenances', id);
-                    await updateDoc(docRef, payload);
-                    showToast('Manutenção atualizada no Firebase!');
-                } else {
-                    payload.createdAt = new Date().toISOString();
-                    const collectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'maintenances');
-                    await addDoc(collectionRef, payload);
-                    showToast('Relatório salvo em tempo real!');
+            let savedRemotely = false;
+
+            if (useFirebase && db) {
+                try {
+                    if (id) {
+                        const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'maintenances', id);
+                        await updateDoc(docRef, payload);
+                    } else {
+                        payload.createdAt = new Date().toISOString();
+                        const collectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'maintenances');
+                        await addDoc(collectionRef, payload);
+                    }
+                    savedRemotely = true;
+                } catch (err) {
+                    console.warn("Erro ao salvar no Firestore, usando salvamento local:", err);
                 }
-                closeReportModal();
-            } catch (err) {
-                console.error("Erro ao salvar no Firestore:", err);
-                showToast("Erro ao gravar dados na nuvem.");
             }
+
+            if (!savedRemotely) {
+                if (id) {
+                    const index = records.findIndex(r => r.id === id);
+                    if (index !== -1) {
+                        records[index] = { ...records[index], ...payload };
+                    }
+                } else {
+                    payload.id = 'local_' + Date.now();
+                    payload.createdAt = new Date().toISOString();
+                    records.push(payload);
+                }
+                saveLocalRecords();
+                updateView();
+            }
+
+            showToast('Chamado registrado com sucesso!');
+            closeReportModal();
         };
 
         window.updateRecordStatus = async function(id, newStatus) {
-            try {
-                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'maintenances', id);
-                await updateDoc(docRef, { 
-                    status: newStatus,
-                    updatedAt: new Date().toISOString()
-                });
-                showToast(`Status atualizado para ${newStatus}`);
-            } catch (err) {
-                console.error("Erro ao atualizar status:", err);
-                showToast("Erro ao atualizar no banco de dados.");
+            let updated = false;
+
+            if (useFirebase && db) {
+                try {
+                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'maintenances', id);
+                    await updateDoc(docRef, { 
+                        status: newStatus,
+                        updatedAt: new Date().toISOString()
+                    });
+                    updated = true;
+                } catch (err) {
+                    console.warn("Erro ao atualizar status no Firestore:", err);
+                }
             }
+
+            if (!updated) {
+                const index = records.findIndex(r => r.id === id);
+                if (index !== -1) {
+                    records[index].status = newStatus;
+                    records[index].updatedAt = new Date().toISOString();
+                    saveLocalRecords();
+                    updateView();
+                }
+            }
+
+            showToast(`Status atualizado para ${newStatus}`);
         };
 
         window.deleteRecord = async function(id) {
-            if (confirm('Deseja realmente remover esta manutenção do banco de dados?')) {
-                try {
-                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'maintenances', id);
-                    await deleteDoc(docRef);
-                    showToast('Registro excluído!');
-                } catch (err) {
-                    console.error("Erro ao excluir documento:", err);
+            if (confirm('Deseja realmente excluir este chamado de manutenção?')) {
+                let deleted = false;
+
+                if (useFirebase && db) {
+                    try {
+                        const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'maintenances', id);
+                        await deleteDoc(docRef);
+                        deleted = true;
+                    } catch (err) {
+                        console.warn("Erro ao remover no Firestore:", err);
+                    }
                 }
+
+                if (!deleted) {
+                    records = records.filter(r => r.id !== id);
+                    saveLocalRecords();
+                    updateView();
+                }
+
+                showToast('Registro excluído com sucesso!');
             }
         };
 
-        // AUXILIARES DE INTERFACE
+        // ALTERNÂNCIA DE ABAS DE AUTENTICAÇÃO
         window.switchAuthTab = function(tab) {
             const loginForm = document.getElementById('form-login');
             const regForm = document.getElementById('form-register');
@@ -597,16 +743,17 @@
             if (tab === 'login') {
                 loginForm.classList.remove('hidden');
                 regForm.classList.add('hidden');
-                loginBtn.className = 'w-1/2 py-2 border-b-2 border-brand-900 text-brand-900 font-bold transition';
-                regBtn.className = 'w-1/2 py-2 border-b-2 border-transparent text-slate-400 hover:text-slate-600 transition';
+                loginBtn.className = 'w-1/2 py-2.5 border-b-2 border-brand-900 text-brand-900 font-bold transition';
+                regBtn.className = 'w-1/2 py-2.5 border-b-2 border-transparent text-slate-400 hover:text-slate-600 transition';
             } else {
                 loginForm.classList.add('hidden');
                 regForm.classList.remove('hidden');
-                regBtn.className = 'w-1/2 py-2 border-b-2 border-emerald-700 text-emerald-700 font-bold transition';
-                loginBtn.className = 'w-1/2 py-2 border-b-2 border-transparent text-slate-400 hover:text-slate-600 transition';
+                regBtn.className = 'w-1/2 py-2.5 border-b-2 border-emerald-700 text-emerald-700 font-bold transition';
+                loginBtn.className = 'w-1/2 py-2.5 border-b-2 border-transparent text-slate-400 hover:text-slate-600 transition';
             }
         };
 
+        // RENDERIZAÇÃO DA TABELA DA GESTÃO
         function renderAdminTable() {
             const data = getFilteredRecords();
             const tbody = document.getElementById('maintenance-table-body');
@@ -629,50 +776,62 @@
 
                 let statusBadge = '';
                 if (item.status === 'Pendente') {
-                    statusBadge = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>Pendente</span>`;
+                    statusBadge = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>Pendente</span>`;
                 } else if (item.status === 'Em Manutenção') {
-                    statusBadge = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800"><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>Em Manutenção</span>`;
+                    statusBadge = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800"><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>Em Manutenção</span>`;
                 } else {
-                    statusBadge = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Concluído</span>`;
+                    statusBadge = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Concluído</span>`;
                 }
 
-                const fueledBadge = item.isFueled === 'Sim'
-                    ? `<span class="text-xs text-emerald-700 font-semibold flex items-center gap-1"><i class="fa-solid fa-gas-pump"></i> Sim</span>`
-                    : `<span class="text-xs text-red-600 font-semibold flex items-center gap-1"><i class="fa-solid fa-circle-exclamation"></i> Não</span>`;
+                let urgencyBadge = '';
+                if (item.urgency === 'Alta') {
+                    urgencyBadge = `<span class="px-2 py-0.5 rounded text-[11px] font-bold bg-red-100 text-red-700">🔴 Alta / Parado</span>`;
+                } else if (item.urgency === 'Média') {
+                    urgencyBadge = `<span class="px-2 py-0.5 rounded text-[11px] font-bold bg-amber-100 text-amber-700">🟡 Média</span>`;
+                } else {
+                    urgencyBadge = `<span class="px-2 py-0.5 rounded text-[11px] font-bold bg-slate-100 text-slate-600">🟢 Baixa</span>`;
+                }
+
+                const fuelText = item.fuelLevel || (item.isFueled === 'Sim' ? 'Tanque Cheio' : 'Reserva');
+                const fuelBadge = fuelText.includes('Cheio') 
+                    ? `<span class="text-xs text-emerald-700 font-semibold flex items-center gap-1"><i class="fa-solid fa-gas-pump"></i> Cheio</span>`
+                    : `<span class="text-xs text-amber-600 font-semibold flex items-center gap-1"><i class="fa-solid fa-gas-pump"></i> ${fuelText}</span>`;
 
                 const dateObj = new Date(item.createdAt || Date.now());
                 const formattedDate = dateObj.toLocaleDateString('pt-BR');
                 const formattedTime = dateObj.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
                 tr.innerHTML = `
-                    <td class="px-4 py-3 whitespace-nowrap text-xs text-slate-500">
-                        <div class="font-medium text-slate-700">${formattedDate}</div>
+                    <td class="px-4 py-3.5 whitespace-nowrap text-xs text-slate-500">
+                        <div class="font-bold text-slate-700">${formattedDate}</div>
                         <div>${formattedTime}</div>
                     </td>
-                    <td class="px-4 py-3 font-semibold text-slate-800">${item.driverName}</td>
-                    <td class="px-4 py-3">
+                    <td class="px-4 py-3.5 font-bold text-slate-800">${item.driverName}</td>
+                    <td class="px-4 py-3.5">
                         <div class="font-mono font-bold text-slate-800 text-xs bg-slate-100 px-2 py-0.5 rounded border border-slate-200 inline-block">${item.plate}</div>
-                        <div class="text-xs text-slate-500 mt-0.5">${Number(item.km || 0).toLocaleString('pt-BR')} KM</div>
+                        <div class="text-xs text-slate-500 font-medium mt-0.5">${Number(item.km || 0).toLocaleString('pt-BR')} KM</div>
                     </td>
-                    <td class="px-4 py-3">${fueledBadge}</td>
-                    <td class="px-4 py-3 max-w-xs">
+                    <td class="px-4 py-3.5">${fuelBadge}</td>
+                    <td class="px-4 py-3.5">${urgencyBadge}</td>
+                    <td class="px-4 py-3.5 max-w-xs">
                         <span class="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200 mb-1 inline-block">${item.serviceType}</span>
-                        <p class="text-xs text-slate-600 line-clamp-2">${item.description}</p>
+                        <p class="text-xs text-slate-700 font-medium line-clamp-2">${item.description}</p>
+                        ${item.adminNotes ? `<p class="text-[11px] text-blue-600 font-semibold mt-1"><i class="fa-solid fa-comment-dots"></i> ${item.adminNotes}</p>` : ''}
                     </td>
-                    <td class="px-4 py-3 text-center whitespace-nowrap">${statusBadge}</td>
-                    <td class="px-4 py-3 text-center whitespace-nowrap">
+                    <td class="px-4 py-3.5 text-center whitespace-nowrap">${statusBadge}</td>
+                    <td class="px-4 py-3.5 text-center whitespace-nowrap">
                         <div class="flex items-center justify-center space-x-2">
-                            <select onchange="updateRecordStatus('${item.id}', this.value)" class="text-xs border border-slate-200 rounded px-1.5 py-1 bg-white focus:outline-none">
+                            <select onchange="updateRecordStatus('${item.id}', this.value)" class="text-xs font-semibold border border-slate-300 rounded-lg px-2 py-1 bg-white focus:outline-none shadow-sm">
                                 <option value="Pendente" ${item.status === 'Pendente' ? 'selected' : ''}>Pendente</option>
                                 <option value="Em Manutenção" ${item.status === 'Em Manutenção' ? 'selected' : ''}>Em Manutenção</option>
                                 <option value="Concluído" ${item.status === 'Concluído' ? 'selected' : ''}>Concluído</option>
                             </select>
 
-                            <button onclick="editRecord('${item.id}')" class="text-slate-400 hover:text-blue-600 p-1" title="Editar">
-                                <i class="fa-solid fa-pen-to-square"></i>
+                            <button onclick="editRecord('${item.id}')" class="text-slate-400 hover:text-blue-600 p-1.5 rounded-lg hover:bg-slate-100 transition" title="Editar / Adicionar Nota">
+                                <i class="fa-solid fa-pen-to-square text-base"></i>
                             </button>
-                            <button onclick="deleteRecord('${item.id}')" class="text-slate-400 hover:text-red-600 p-1" title="Excluir">
-                                <i class="fa-solid fa-trash-can"></i>
+                            <button onclick="deleteRecord('${item.id}')" class="text-slate-400 hover:text-red-600 p-1.5 rounded-lg hover:bg-slate-100 transition" title="Excluir">
+                                <i class="fa-solid fa-trash-can text-base"></i>
                             </button>
                         </div>
                     </td>
@@ -682,6 +841,7 @@
             });
         }
 
+        // RENDERIZAÇÃO DOS CARDS DO MOTORISTA
         function renderDriverCards() {
             const container = document.getElementById('driver-cards-container');
             container.innerHTML = '';
@@ -689,7 +849,7 @@
             const userRecords = records.filter(r => r.driverEmail === currentUser?.email || currentUser?.role === 'admin');
 
             if (userRecords.length === 0) {
-                container.innerHTML = `<p class="text-sm text-slate-500 text-center py-6">Nenhum chamado de manutenção registrado por você ainda.</p>`;
+                container.innerHTML = `<p class="text-sm text-slate-500 text-center py-6 font-medium">Você ainda não enviou solicitações de manutenção.</p>`;
                 return;
             }
 
@@ -697,15 +857,15 @@
 
             userRecords.forEach(item => {
                 const card = document.createElement('div');
-                card.className = 'border border-slate-200 rounded-xl p-4 bg-slate-50 flex flex-col justify-between gap-3';
+                card.className = 'border border-slate-200 rounded-xl p-4 bg-slate-50 flex flex-col justify-between gap-3 shadow-sm';
 
                 let statusBadge = '';
                 if (item.status === 'Pendente') {
-                    statusBadge = `<span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800">Pendente</span>`;
+                    statusBadge = `<span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800">Pendente</span>`;
                 } else if (item.status === 'Em Manutenção') {
-                    statusBadge = `<span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">Em Manutenção</span>`;
+                    statusBadge = `<span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-100 text-blue-800">Em Manutenção</span>`;
                 } else {
-                    statusBadge = `<span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">Concluído</span>`;
+                    statusBadge = `<span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">Concluído</span>`;
                 }
 
                 const dateObj = new Date(item.createdAt || Date.now());
@@ -713,14 +873,15 @@
                 card.innerHTML = `
                     <div class="flex items-center justify-between border-b border-slate-200 pb-2">
                         <div class="flex items-center gap-2">
-                            <span class="font-mono font-bold text-sm bg-white px-2 py-0.5 border rounded">${item.plate}</span>
-                            <span class="text-xs text-slate-500 font-medium">${item.serviceType}</span>
+                            <span class="font-mono font-bold text-sm bg-white px-2 py-0.5 border rounded-lg text-slate-800">${item.plate}</span>
+                            <span class="text-xs text-slate-600 font-semibold">${item.serviceType}</span>
                         </div>
                         ${statusBadge}
                     </div>
-                    <p class="text-xs text-slate-700">${item.description}</p>
-                    <div class="flex items-center justify-between text-[11px] text-slate-500 pt-1">
-                        <span>KM: ${Number(item.km || 0).toLocaleString('pt-BR')} • Abastecido: <strong>${item.isFueled}</strong></span>
+                    <p class="text-xs text-slate-700 font-medium">${item.description}</p>
+                    ${item.adminNotes ? `<div class="bg-blue-50 border border-blue-100 p-2 rounded-lg text-xs text-blue-800 font-medium"><strong>Nota da Logística:</strong> ${item.adminNotes}</div>` : ''}
+                    <div class="flex items-center justify-between text-[11px] text-slate-500 pt-1 font-medium">
+                        <span>KM: ${Number(item.km || 0).toLocaleString('pt-BR')} • Tanque: <strong>${item.fuelLevel || 'Abastecido'}</strong></span>
                         <span>${dateObj.toLocaleDateString('pt-BR')} ${dateObj.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'})}</span>
                     </div>
                 `;
@@ -739,23 +900,19 @@
         function getFilteredRecords() {
             const search = document.getElementById('search-input').value.toLowerCase();
             const statusFilter = document.getElementById('filter-status').value;
+            const urgencyFilter = document.getElementById('filter-urgency').value;
 
             return records.filter(item => {
                 const matchesSearch = (item.driverName || '').toLowerCase().includes(search) ||
                                       (item.plate || '').toLowerCase().includes(search) ||
                                       (item.description || '').toLowerCase().includes(search);
                 const matchesStatus = statusFilter === 'ALL' || item.status === statusFilter;
-                return matchesSearch && matchesStatus;
+                const matchesUrgency = urgencyFilter === 'ALL' || item.urgency === urgencyFilter;
+                return matchesSearch && matchesStatus && matchesUrgency;
             });
         }
 
         window.applyFilters = function() {
-            renderAdminTable();
-        };
-
-        window.resetFilters = function() {
-            document.getElementById('search-input').value = '';
-            document.getElementById('filter-status').value = 'ALL';
             renderAdminTable();
         };
 
@@ -777,10 +934,12 @@
                     document.getElementById('vehicle-plate').value = record.plate;
                     document.getElementById('current-km').value = record.km;
                     document.getElementById('service-type').value = record.serviceType;
-                    document.getElementById('is-fueled').value = record.isFueled;
+                    document.getElementById('fuel-level').value = record.fuelLevel || 'Tanque Cheio';
+                    document.getElementById('urgency-level').value = record.urgency || 'Baixa';
                     document.getElementById('service-description').value = record.description;
                     if (currentUser?.role === 'admin') {
                         document.getElementById('status-field').value = record.status;
+                        document.getElementById('admin-notes').value = record.adminNotes || '';
                     }
                 }
             }
@@ -794,6 +953,31 @@
 
         window.editRecord = function(id) {
             openReportModal(id);
+        };
+
+        // EXPORTAÇÃO CSV
+        window.exportDataCSV = function() {
+            if (records.length === 0) {
+                showToast("Nenhum registro para exportar.");
+                return;
+            }
+
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "Data;Motorista;Placa;KM;Tipo;Tanque;Urgencia;Status;Descricao\n";
+
+            records.forEach(r => {
+                const date = new Date(r.createdAt || Date.now()).toLocaleDateString('pt-BR');
+                const row = `"${date}";"${r.driverName}";"${r.plate}";"${r.km}";"${r.serviceType}";"${r.fuelLevel || ''}";"${r.urgency || ''}";"${r.status}";"${(r.description || '').replace(/"/g, '""')}"`;
+                csvContent += row + "\n";
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `manutencao_frota_megag_${new Date().toISOString().slice(0,10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         };
 
         function showToast(msg) {
