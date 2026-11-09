@@ -60,12 +60,12 @@
             </div>
 
             <!-- FORMULÁRIO DE LOGIN -->
-            <form id="form-login" onsubmit="handleLogin(event)" class="space-y-4">
+            <form id="form-login" onsubmit="handleLogin(event)" class="space-y-4" autocomplete="off">
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">E-mail</label>
                     <div class="relative">
                         <i class="fa-solid fa-envelope absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                        <input type="email" id="login-email" required placeholder="seu.email@megag.com.br" class="w-full pl-9 pr-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                        <input type="email" id="login-email" required placeholder="seu.email@megag.com.br" autocomplete="off" class="w-full pl-9 pr-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
                     </div>
                 </div>
 
@@ -73,7 +73,7 @@
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Senha</label>
                     <div class="relative">
                         <i class="fa-solid fa-lock absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                        <input type="password" id="login-password" required placeholder="••••••••" class="w-full pl-9 pr-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                        <input type="password" id="login-password" required placeholder="••••••••" autocomplete="new-password" class="w-full pl-9 pr-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
                     </div>
                 </div>
 
@@ -84,12 +84,12 @@
             </form>
 
             <!-- FORMULÁRIO DE CADASTRO -->
-            <form id="form-register" onsubmit="handleRegister(event)" class="space-y-4 hidden">
+            <form id="form-register" onsubmit="handleRegister(event)" class="space-y-4 hidden" autocomplete="off">
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nome Completo *</label>
                     <div class="relative">
                         <i class="fa-solid fa-user absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                        <input type="text" id="reg-name" required placeholder="Nome Completo" class="w-full pl-9 pr-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                        <input type="text" id="reg-name" required placeholder="Nome Completo" autocomplete="off" class="w-full pl-9 pr-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
                     </div>
                 </div>
 
@@ -97,7 +97,7 @@
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">E-mail Corporativo *</label>
                     <div class="relative">
                         <i class="fa-solid fa-envelope absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                        <input type="email" id="reg-email" required placeholder="nome@megag.com.br" class="w-full pl-9 pr-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                        <input type="email" id="reg-email" required placeholder="nome@megag.com.br" autocomplete="off" class="w-full pl-9 pr-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
                     </div>
                 </div>
 
@@ -105,7 +105,7 @@
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Senha *</label>
                     <div class="relative">
                         <i class="fa-solid fa-lock absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                        <input type="password" id="reg-password" minlength="4" required placeholder="Crie uma senha" class="w-full pl-9 pr-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                        <input type="password" id="reg-password" minlength="4" required placeholder="Crie uma senha" autocomplete="new-password" class="w-full pl-9 pr-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
                     </div>
                 </div>
 
