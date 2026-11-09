@@ -383,102 +383,26 @@
         <span id="toast-message" class="text-sm font-medium">Operação realizada com sucesso!</span>
     </div>
 
-    <!-- MÓDULO JS COM INTEGRAÇÃO FIREBASE FIRESTORE E FALLBACK LOCAL -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-        // Configurações Globais
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'megag-fleet-app';
-        let firebaseConfig = null;
-
-        try {
-            if (typeof __firebase_config !== 'undefined') {
-                firebaseConfig = JSON.parse(__firebase_config);
-            }
-        } catch (e) {
-            console.warn("Configuração Firebase não parseada, usando modo resiliente:", e);
-        }
-
-        let app = null;
-        let auth = null;
-        let db = null;
-        let useFirebase = false;
-
-        if (firebaseConfig && firebaseConfig.projectId && firebaseConfig.projectId !== "demo") {
-            try {
-                app = initializeApp(firebaseConfig);
-                auth = getAuth(app);
-                db = getFirestore(app);
-                useFirebase = true;
-            } catch (err) {
-                console.warn("Erro ao iniciar Firebase SDK, operando com LocalStorage:", err);
-            }
-        }
-
+    <!-- MÓDULO JS 100% LOCALSTORAGE (SEM DEPENDÊNCIA DE FIREBASE) -->
+    <script>
         let currentUser = null;
         let records = [];
-        let unsubscribeStore = null;
 
-        // Inicializar Autenticação no Firebase se disponível
-        async function initAuth() {
-            if (!useFirebase || !auth) return;
-            try {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
-            } catch (err) {
-                console.warn("Autenticação anônima em fallback:", err);
-            }
-        }
+        // Inicialização ao carregar a página
+        window.addEventListener('DOMContentLoaded', () => {
+            loadLocalRecords();
+        });
 
-        initAuth();
-
-        if (useFirebase && auth) {
-            onAuthStateChanged(auth, (user) => {
-                if (user && currentUser) {
-                    setupRealtimeListener();
-                }
-            });
-        }
-
-        // ESCOTA EM TEMPO REAL FIRESTORE
-        function setupRealtimeListener() {
-            if (!useFirebase || !db) {
-                loadLocalRecords();
-                return;
-            }
-
-            if (unsubscribeStore) unsubscribeStore();
-
-            const maintCollection = collection(db, 'artifacts', appId, 'public', 'data', 'maintenances');
-
-            unsubscribeStore = onSnapshot(maintCollection, (snapshot) => {
-                records = [];
-                snapshot.forEach((documentSnap) => {
-                    records.push({
-                        id: documentSnap.id,
-                        ...documentSnap.data()
-                    });
-                });
-
-                updateView();
-            }, (error) => {
-                console.error("Erro no listener Firestore, caindo para local:", error);
-                loadLocalRecords();
-            });
-        }
-
-        // LEITURA LOCAL DE SEGURANÇA (FALLBACK)
+        // CARREGAR E SALVAR DADOS NO LOCALSTORAGE
         function loadLocalRecords() {
             try {
                 const stored = localStorage.getItem('megag_maintenances');
-                records = stored ? JSON.parse(stored) : [];
+                records = stored ? JSON.parse(stored) : getInitialMockData();
+                if (!stored) {
+                    saveLocalRecords();
+                }
             } catch (e) {
-                records = [];
+                records = getInitialMockData();
             }
             updateView();
         }
@@ -491,6 +415,54 @@
             }
         }
 
+        // Dados de demonstração padrão da Nova Mega G
+        function getInitialMockData() {
+            return [
+                {
+                    id: 'mock_1',
+                    driverName: 'Cláudio Mendes',
+                    driverEmail: 'motorista@megag.com.br',
+                    plate: 'DKM-4411',
+                    km: 142400,
+                    serviceType: 'Teclado Ravex',
+                    fuelLevel: 'Reserva',
+                    urgency: 'Alta',
+                    description: 'Teclado Ravex não aceita digitação da senha de liberação da trava do baú.',
+                    status: 'Em Manutenção',
+                    adminNotes: 'Agendado técnico para troca do teclado.',
+                    createdAt: '2026-06-27T09:30:00.000Z'
+                },
+                {
+                    id: 'mock_2',
+                    driverName: 'Renato Oliveira',
+                    driverEmail: 'renato@megag.com.br',
+                    plate: 'KLU-9822',
+                    km: 210000,
+                    serviceType: 'Preventiva',
+                    fuelLevel: 'Tanque Cheio',
+                    urgency: 'Baixa',
+                    description: 'Troca de óleo de motor e revisão dos freios após retorno da rota.',
+                    status: 'Concluído',
+                    adminNotes: 'Manutenção efetuada com sucesso.',
+                    createdAt: '2026-06-28T17:30:00.000Z'
+                },
+                {
+                    id: 'mock_3',
+                    driverName: 'José Santos',
+                    driverEmail: 'jose@megag.com.br',
+                    plate: 'FNG-3148',
+                    km: 6700,
+                    serviceType: 'Trava Baú',
+                    fuelLevel: 'Meio Tanque',
+                    urgency: 'Média',
+                    description: 'Trava eletromagnética do baú do caminhão da casa travada. Precisa de reparo imediato.',
+                    status: 'Pendente',
+                    adminNotes: '',
+                    createdAt: '2026-06-27T08:00:00.000Z'
+                }
+            ];
+        }
+
         function updateView() {
             if (currentUser?.role === 'admin') {
                 renderAdminTable();
@@ -501,29 +473,13 @@
         }
 
         // CADASTRO DE NOVO USUÁRIO
-        window.handleRegister = async function(e) {
+        window.handleRegister = function(e) {
             e.preventDefault();
             const name = document.getElementById('reg-name').value.trim();
             const email = document.getElementById('reg-email').value.trim().toLowerCase();
             const password = document.getElementById('reg-password').value;
             const role = document.getElementById('reg-role').value;
 
-            if (useFirebase && db) {
-                try {
-                    const userRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', email);
-                    await setDoc(userRef, {
-                        name,
-                        email,
-                        password,
-                        role,
-                        createdAt: new Date().toISOString()
-                    });
-                } catch (error) {
-                    console.warn("Não foi possível registrar no Firestore, gravando localmente:", error);
-                }
-            }
-
-            // Gravar também no localStorage local para login instantâneo
             const users = JSON.parse(localStorage.getItem('megag_users') || '{}');
             users[email] = { name, email, password, role };
             localStorage.setItem('megag_users', JSON.stringify(users));
@@ -535,87 +491,57 @@
         };
 
         // LOGIN DE USUÁRIO
-        window.handleLogin = async function(e) {
+        window.handleLogin = function(e) {
             e.preventDefault();
             const email = document.getElementById('login-email').value.trim().toLowerCase();
             const password = document.getElementById('login-password').value;
 
-            try {
-                if (email === 'admin@megag.com.br' && password === '123') {
-                    currentUser = { name: 'Kaique (Gestão)', email, role: 'admin' };
-                } else if (email === 'motorista@megag.com.br' && password === '123') {
-                    currentUser = { name: 'Motorista Padrão', email, role: 'driver' };
+            if (email === 'admin@megag.com.br' && password === '123') {
+                currentUser = { name: 'Kaique (Gestão)', email, role: 'admin' };
+            } else if (email === 'motorista@megag.com.br' && password === '123') {
+                currentUser = { name: 'Motorista Padrão', email, role: 'driver' };
+            } else {
+                const users = JSON.parse(localStorage.getItem('megag_users') || '{}');
+                if (users[email] && users[email].password === password) {
+                    const userFound = users[email];
+                    currentUser = { name: userFound.name, email: userFound.email, role: userFound.role };
                 } else {
-                    let userFound = null;
-
-                    if (useFirebase && db) {
-                        try {
-                            const userRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', email);
-                            const userSnap = await getDoc(userRef);
-                            if (userSnap.exists() && userSnap.data().password === password) {
-                                userFound = userSnap.data();
-                            }
-                        } catch (err) {
-                            console.warn("Consulta Firestore ignorada, buscando local:", err);
-                        }
-                    }
-
-                    if (!userFound) {
-                        const users = JSON.parse(localStorage.getItem('megag_users') || '{}');
-                        if (users[email] && users[email].password === password) {
-                            userFound = users[email];
-                        }
-                    }
-
-                    if (userFound) {
-                        currentUser = { name: userFound.name, email: userFound.email, role: userFound.role };
-                    } else {
-                        showToast("E-mail ou senha incorretos!");
-                        return;
-                    }
+                    showToast("E-mail ou senha incorretos!");
+                    return;
                 }
-
-                document.getElementById('auth-screen').classList.add('hidden');
-                document.getElementById('app-header').classList.remove('hidden');
-
-                const badge = document.getElementById('header-user-badge');
-                if (currentUser.role === 'admin') {
-                    badge.innerText = `Gestão (${currentUser.name})`;
-                    document.getElementById('admin-view').classList.remove('hidden');
-                    document.getElementById('driver-view').classList.add('hidden');
-                    document.getElementById('admin-fields-container').classList.remove('hidden');
-                } else {
-                    badge.innerText = `Motorista (${currentUser.name})`;
-                    document.getElementById('driver-view').classList.remove('hidden');
-                    document.getElementById('admin-view').classList.add('hidden');
-                    document.getElementById('admin-fields-container').classList.add('hidden');
-                    document.getElementById('driver-name').value = currentUser.name;
-                }
-
-                if (useFirebase && db) {
-                    setupRealtimeListener();
-                } else {
-                    loadLocalRecords();
-                }
-
-                showToast(`Bem-vindo, ${currentUser.name}!`);
-            } catch (err) {
-                console.error("Erro ao realizar login:", err);
-                showToast("Erro durante a autenticação.");
             }
+
+            document.getElementById('auth-screen').classList.add('hidden');
+            document.getElementById('app-header').classList.remove('hidden');
+
+            const badge = document.getElementById('header-user-badge');
+            if (currentUser.role === 'admin') {
+                badge.innerText = `Gestão (${currentUser.name})`;
+                document.getElementById('admin-view').classList.remove('hidden');
+                document.getElementById('driver-view').classList.add('hidden');
+                document.getElementById('admin-fields-container').classList.remove('hidden');
+            } else {
+                badge.innerText = `Motorista (${currentUser.name})`;
+                document.getElementById('driver-view').classList.remove('hidden');
+                document.getElementById('admin-view').classList.add('hidden');
+                document.getElementById('admin-fields-container').classList.add('hidden');
+                document.getElementById('driver-name').value = currentUser.name;
+            }
+
+            loadLocalRecords();
+            showToast(`Bem-vindo, ${currentUser.name}!`);
         };
 
         window.logout = function() {
             currentUser = null;
-            if (unsubscribeStore) unsubscribeStore();
             document.getElementById('auth-screen').classList.remove('hidden');
             document.getElementById('app-header').classList.add('hidden');
             document.getElementById('admin-view').classList.add('hidden');
             document.getElementById('driver-view').classList.add('hidden');
         };
 
-        // SALVAR MANUTENÇÃO (FIRESTORE OU LOCALSTORAGE)
-        window.handleFormSubmit = async function(e) {
+        // SALVAR MANUTENÇÃO (LOCALSTORAGE)
+        window.handleFormSubmit = function(e) {
             e.preventDefault();
 
             const id = document.getElementById('entry-id').value;
@@ -643,92 +569,39 @@
                 updatedAt: new Date().toISOString()
             };
 
-            let savedRemotely = false;
-
-            if (useFirebase && db) {
-                try {
-                    if (id) {
-                        const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'maintenances', id);
-                        await updateDoc(docRef, payload);
-                    } else {
-                        payload.createdAt = new Date().toISOString();
-                        const collectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'maintenances');
-                        await addDoc(collectionRef, payload);
-                    }
-                    savedRemotely = true;
-                } catch (err) {
-                    console.warn("Erro ao salvar no Firestore, usando salvamento local:", err);
+            if (id) {
+                const index = records.findIndex(r => r.id === id);
+                if (index !== -1) {
+                    records[index] = { ...records[index], ...payload };
                 }
+            } else {
+                payload.id = 'rec_' + Date.now();
+                payload.createdAt = new Date().toISOString();
+                records.unshift(payload);
             }
 
-            if (!savedRemotely) {
-                if (id) {
-                    const index = records.findIndex(r => r.id === id);
-                    if (index !== -1) {
-                        records[index] = { ...records[index], ...payload };
-                    }
-                } else {
-                    payload.id = 'local_' + Date.now();
-                    payload.createdAt = new Date().toISOString();
-                    records.push(payload);
-                }
-                saveLocalRecords();
-                updateView();
-            }
-
+            saveLocalRecords();
+            updateView();
             showToast('Chamado registrado com sucesso!');
             closeReportModal();
         };
 
-        window.updateRecordStatus = async function(id, newStatus) {
-            let updated = false;
-
-            if (useFirebase && db) {
-                try {
-                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'maintenances', id);
-                    await updateDoc(docRef, { 
-                        status: newStatus,
-                        updatedAt: new Date().toISOString()
-                    });
-                    updated = true;
-                } catch (err) {
-                    console.warn("Erro ao atualizar status no Firestore:", err);
-                }
+        window.updateRecordStatus = function(id, newStatus) {
+            const index = records.findIndex(r => r.id === id);
+            if (index !== -1) {
+                records[index].status = newStatus;
+                records[index].updatedAt = new Date().toISOString();
+                saveLocalRecords();
+                updateView();
+                showToast(`Status atualizado para ${newStatus}`);
             }
-
-            if (!updated) {
-                const index = records.findIndex(r => r.id === id);
-                if (index !== -1) {
-                    records[index].status = newStatus;
-                    records[index].updatedAt = new Date().toISOString();
-                    saveLocalRecords();
-                    updateView();
-                }
-            }
-
-            showToast(`Status atualizado para ${newStatus}`);
         };
 
-        window.deleteRecord = async function(id) {
+        window.deleteRecord = function(id) {
             if (confirm('Deseja realmente excluir este chamado de manutenção?')) {
-                let deleted = false;
-
-                if (useFirebase && db) {
-                    try {
-                        const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'maintenances', id);
-                        await deleteDoc(docRef);
-                        deleted = true;
-                    } catch (err) {
-                        console.warn("Erro ao remover no Firestore:", err);
-                    }
-                }
-
-                if (!deleted) {
-                    records = records.filter(r => r.id !== id);
-                    saveLocalRecords();
-                    updateView();
-                }
-
+                records = records.filter(r => r.id !== id);
+                saveLocalRecords();
+                updateView();
                 showToast('Registro excluído com sucesso!');
             }
         };
@@ -792,7 +665,7 @@
                     urgencyBadge = `<span class="px-2 py-0.5 rounded text-[11px] font-bold bg-slate-100 text-slate-600">🟢 Baixa</span>`;
                 }
 
-                const fuelText = item.fuelLevel || (item.isFueled === 'Sim' ? 'Tanque Cheio' : 'Reserva');
+                const fuelText = item.fuelLevel || 'Tanque Cheio';
                 const fuelBadge = fuelText.includes('Cheio') 
                     ? `<span class="text-xs text-emerald-700 font-semibold flex items-center gap-1"><i class="fa-solid fa-gas-pump"></i> Cheio</span>`
                     : `<span class="text-xs text-amber-600 font-semibold flex items-center gap-1"><i class="fa-solid fa-gas-pump"></i> ${fuelText}</span>`;
