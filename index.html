@@ -127,6 +127,19 @@
                             <input type="number" id="mKm" required placeholder="Ex: 45200" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 text-sm">
                         </div>
                         <div>
+                            <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Destino / Rota do Veículo *</label>
+                            <input type="text" id="mDestination" required placeholder="Ex: Rota Ribeirão Preto / Base Araraquara" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Status do Orçamento *</label>
+                            <select id="mBudgetStatus" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 text-sm bg-white">
+                                <option value="Não necessário / Avaliação inicial">Não necessário / Avaliação inicial</option>
+                                <option value="Aguardando Orçamento Oficina">Aguardando Orçamento Oficina</option>
+                                <option value="Orçamento Pronto / Em Análise">Orçamento Pronto / Em Análise</option>
+                                <option value="Orçamento Aprovado">Orçamento Aprovado</option>
+                            </select>
+                        </div>
+                        <div>
                             <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Nível de Combustível (Abastecimento) *</label>
                             <select id="mFuel" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 text-sm bg-white">
                                 <option value="Tanque Cheio (Regra Atendida)">Tanque Cheio (Conforme Regra)</option>
@@ -197,7 +210,7 @@
                     <div class="p-4 bg-gray-50 border-b flex flex-col sm:flex-row justify-between items-center gap-3">
                         <h3 class="font-bold text-gray-800 text-md"><i class="fa-solid fa-truck-monster text-red-600 mr-2"></i> Controle Geral da Frota Própria</h3>
                         <div class="flex items-center gap-2 w-full sm:w-auto">
-                            <input type="text" id="searchFilter" placeholder="Pesquisar placa ou motorista..." class="px-3 py-1.5 border rounded-lg text-sm w-full sm:w-64" oninput="renderApp()">
+                            <input type="text" id="searchFilter" placeholder="Pesquisar placa, rota ou motorista..." class="px-3 py-1.5 border rounded-lg text-sm w-full sm:w-64" oninput="renderApp()">
                             <button onclick="exportCSV()" class="bg-gray-800 hover:bg-gray-900 text-white px-3 py-1.5 rounded-lg text-sm whitespace-nowrap">
                                 <i class="fa-solid fa-download mr-1"></i> Exportar CSV
                             </button>
@@ -210,8 +223,8 @@
                                 <tr class="bg-gray-100 text-gray-600 uppercase text-xs">
                                     <th class="p-3">Data / Motorista</th>
                                     <th class="p-3">Veículo / KM</th>
-                                    <th class="p-3">Abastecimento</th>
-                                    <th class="p-3">Urgência</th>
+                                    <th class="p-3">Destino / Orçamento</th>
+                                    <th class="p-3">Combustível / Urgência</th>
                                     <th class="p-3">Problema Relatado</th>
                                     <th class="p-3">Status</th>
                                     <th class="p-3 text-right">Ações / Gestão</th>
@@ -332,6 +345,8 @@
                 e.preventDefault();
                 const truck = document.getElementById("mTruck").value.toUpperCase();
                 const km = document.getElementById("mKm").value;
+                const destination = document.getElementById("mDestination").value;
+                const budgetStatus = document.getElementById("mBudgetStatus").value;
                 const fuel = document.getElementById("mFuel").value;
                 const urgency = document.getElementById("mUrgency").value;
                 const desc = document.getElementById("mDesc").value;
@@ -339,6 +354,8 @@
                 const newRecord = {
                     truck,
                     km,
+                    destination,
+                    budgetStatus,
                     fuel,
                     urgency,
                     desc,
@@ -428,7 +445,8 @@
                                 <span class="px-2 py-0.5 text-xs rounded-full font-semibold ${getStatusBadge(item.status)}">${item.status}</span>
                             </div>
                             <p class="text-xs text-gray-600"><strong>Problema:</strong> ${item.desc}</p>
-                            <p class="text-xs text-gray-500 mt-1">KM: ${item.km} | Abastecimento: ${item.fuel} | Urgência: ${item.urgency}</p>
+                            <p class="text-xs text-gray-500 mt-1"><strong>Destino:</strong> ${item.destination || 'Não informado'} | <strong>Orçamento:</strong> ${item.budgetStatus || 'Pendente'}</p>
+                            <p class="text-xs text-gray-500">KM: ${item.km} | Abastecimento: ${item.fuel} | Urgência: ${item.urgency}</p>
                             ${item.notes ? `<p class="text-xs text-red-600 mt-1 bg-red-50 p-1.5 rounded"><strong>Nota da Gestão:</strong> ${item.notes}</p>` : ''}
                         </div>
                         <span class="text-xs text-gray-400 whitespace-nowrap">${item.date}</span>
@@ -440,6 +458,7 @@
                 const filtered = maintenances.filter(m => 
                     (m.truck && m.truck.toLowerCase().includes(filterText)) || 
                     (m.driverName && m.driverName.toLowerCase().includes(filterText)) ||
+                    (m.destination && m.destination.toLowerCase().includes(filterText)) ||
                     (m.desc && m.desc.toLowerCase().includes(filterText))
                 );
 
@@ -460,8 +479,14 @@
                             <p class="text-xs text-gray-400">${item.date}</p>
                         </td>
                         <td class="p-3 font-bold text-gray-800">${item.truck}<br><span class="text-xs font-normal text-gray-500">${item.km} KM</span></td>
-                        <td class="p-3 text-xs">${item.fuel}</td>
-                        <td class="p-3"><span class="px-2 py-0.5 text-xs rounded font-semibold ${getUrgencyBadge(item.urgency)}">${item.urgency}</span></td>
+                        <td class="p-3 text-xs">
+                            <p class="font-semibold text-gray-700"><i class="fa-solid fa-location-dot text-red-500 mr-1"></i>${item.destination || 'N/A'}</p>
+                            <p class="text-gray-500"><i class="fa-solid fa-calculator text-blue-500 mr-1"></i>${item.budgetStatus || 'N/A'}</p>
+                        </td>
+                        <td class="p-3 text-xs">
+                            <p class="text-gray-700">${item.fuel}</p>
+                            <span class="inline-block mt-1 px-2 py-0.5 text-xs rounded font-semibold ${getUrgencyBadge(item.urgency)}">${item.urgency}</span>
+                        </td>
                         <td class="p-3 text-xs max-w-xs truncate" title="${item.desc}">${item.desc}</td>
                         <td class="p-3"><span class="px-2.5 py-1 text-xs rounded-full font-bold ${getStatusBadge(item.status)}">${item.status}</span></td>
                         <td class="p-3 text-right space-y-1">
@@ -484,40 +509,4 @@
         }
 
         function getUrgencyBadge(urgency) {
-            if (urgency && urgency.includes('Alta')) return 'bg-red-100 text-red-700';
-            if (urgency === 'Média') return 'bg-yellow-100 text-yellow-700';
-            return 'bg-gray-100 text-gray-700';
-        }
-
-        async function updateStatus(id, newStatus) {
-            try {
-                const itemRef = window.FB_RTDB.ref(window.FB_RTDB.db, `maintenances/${id}`);
-                await window.FB_RTDB.update(itemRef, { status: newStatus });
-            } catch(e) { alert("Erro ao atualizar status: " + e.message); }
-        }
-
-        async function addNotes(id) {
-            const currentNotes = prompt("Digite a observação da gestão para este veículo:");
-            if (currentNotes !== null) {
-                try {
-                    const itemRef = window.FB_RTDB.ref(window.FB_RTDB.db, `maintenances/${id}`);
-                    await window.FB_RTDB.update(itemRef, { notes: currentNotes });
-                } catch(e) { alert("Erro ao adicionar nota: " + e.message); }
-            }
-        }
-
-        function exportCSV() {
-            let csv = "Data,Motorista,Veiculo,KM,Abastecimento,Urgencia,Status,Problema\n";
-            maintenances.forEach(m => {
-                csv += `"${m.date}","${m.driverName}","${m.truck}","${m.km}","${m.fuel}","${m.urgency}","${m.status}","${(m.desc || '').replace(/"/g, '""')}"\n`;
-            });
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `manutencoes_frota_${new Date().toISOString().slice(0,10)}.csv`;
-            a.click();
-        }
-    </script>
-</body>
-</html>
+            if (urgency && urgency.includes('Alta'))
