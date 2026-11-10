@@ -9,37 +9,31 @@
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Firebase SDKs (Modular) -->
+    <!-- Firebase Realtime Database SDK (Modular) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+        import { getDatabase, ref, set, push, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-        // Configuração padrão do Firebase (Pode ajustar com o seu projeto se necessário)
+        // Configuração do Firebase (Aponte para o seu projeto do Realtime Database)
         const firebaseConfig = {
             apiKey: "AIzaSyDummyKeyForArtifactsInitializationOnly12345",
             authDomain: "nova-mega-g-frota.firebaseapp.com",
+            databaseURL: "https://motoristaararaquara-default-rtdb.firebaseio.com/", // URL do seu Realtime Database
             projectId: "nova-mega-g-frota",
             storageBucket: "nova-mega-g-frota.appspot.com",
             messagingSenderId: "123456789012",
             appId: "1:123456789012:web:abcdef123456789"
         };
 
-        // Inicialização com Fallback Local para garantir estabilidade absoluta
-        let app, db, auth;
-        let useLocalStorageFallback = false;
-
+        let app, db;
         try {
             app = initializeApp(firebaseConfig);
-            db = getFirestore(app);
-            auth = getAuth(app);
+            db = getDatabase(app);
         } catch (e) {
-            console.warn("Modo offline / localStorage ativado devido a restrição de rede:", e);
-            useLocalStorageFallback = true;
+            console.warn("Erro ao iniciar Firebase:", e);
         }
 
-        // Expor instâncias globalmente para o script da aplicação
-        window.FB = { db, auth, useLocalStorageFallback, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, onSnapshot, query, orderBy, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged };
+        window.FB_RTDB = { db, ref, set, push, onValue, update, remove };
     </script>
 </head>
 <body class="bg-gray-100 font-sans text-gray-800">
@@ -55,7 +49,55 @@
                 <p class="text-sm text-gray-500">Controle de Manutenção - Frota Própria</p>
             </div>
 
-            <!-- Formulário de Login -->
             <form id="loginForm" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-semibold uppercase
+                    <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">E-mail</label>
+                    <input type="email" id="loginEmail" autocomplete="off" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none text-sm" placeholder="seu.email@megag.com.br">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Senha</label>
+                    <input type="password" id="loginPassword" autocomplete="new-password" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none text-sm" placeholder="••••••••">
+                </div>
+                <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg transition duration-200 shadow-md">
+                    Entrar no Sistema
+                </button>
+            </form>
+
+            <div class="mt-6 text-center">
+                <button onclick="toggleRegisterMode()" class="text-xs text-red-600 hover:underline font-semibold">
+                    Não tem conta? Cadastrar novo motorista/gestor
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- APLICAÇÃO PRINCIPAL -->
+    <div id="appScreen" class="hidden min-h-screen flex flex-col">
+        <header class="bg-gray-900 text-white shadow-md">
+            <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-red-600 p-2 rounded-lg text-white">
+                        <i class="fa-solid fa-screwdriver-wrench text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="font-bold text-lg leading-tight">Nova Mega G Atacadista</h2>
+                        <p class="text-xs text-gray-400">Gestão de Manutenção de Frota Própria (Casa)</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-4">
+                    <div class="text-right hidden sm:block">
+                        <p id="userLoggedName" class="text-sm font-medium text-gray-200">Usuário</p>
+                        <p id="userLoggedRole" class="text-xs text-red-400 font-semibold uppercase">Cargo</p>
+                    </div>
+                    <button onclick="logout()" class="bg-gray-800 hover:bg-red-600 text-gray-300 hover:text-white px-4 py-2 rounded-lg text-sm transition duration-200 border border-gray-700">
+                        <i class="fa-solid fa-right-from-bracket mr-2"></i> Sair
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6">
+            <!-- PAINEL DO MOTORISTA -->
+            <div id="driverView" class="hidden space-y-6">
+                <div class="bg-white rounded-
