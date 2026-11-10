@@ -8,6 +8,34 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDK Modular -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getDatabase, ref, set, push, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+        // Configuração oficial do seu projeto Firebase (Motorista Araraquara)
+        const firebaseConfig = {
+            apiKey: "AIzaSyDEq9o4Hah_zK2NCyxSPpR92nQ62ImvJoU",
+            authDomain: "motoristaararaquara-59004.firebaseapp.com",
+            databaseURL: "https://motoristaararaquara-59004-default-rtdb.europe-west1.firebasedatabase.app", 
+            projectId: "motoristaararaquara-59004",
+            storageBucket: "motoristaararaquara-59004.appspot.com",
+            messagingSenderId: "533190289503",
+            appId: "1:533190289503:web:bdda9e8ddcf8a7df4b93ea"
+        };
+
+        let app, db;
+        try {
+            app = initializeApp(firebaseConfig);
+            db = getDatabase(app);
+            console.log("Firebase conectado com sucesso!");
+        } catch (e) {
+            console.error("Erro ao conectar ao Firebase:", e);
+        }
+
+        window.FB_RTDB = { db, ref, set, push, onValue, update };
+    </script>
 </head>
 <body class="bg-gray-100 font-sans text-gray-800">
 
@@ -41,7 +69,7 @@
                     Não tem conta? Cadastrar novo motorista/gestor
                 </button>
             </div>
-            
+
             <div class="mt-4 p-3 bg-gray-50 rounded-lg text-xs text-gray-600 border">
                 <p class="font-bold text-gray-700 mb-1">Acesso Direto (Clique para preencher):</p>
                 <div class="flex gap-2 mt-2">
@@ -237,17 +265,26 @@
         let usersList = [];
 
         document.addEventListener("DOMContentLoaded", () => {
-            // Carregar dados salvos
             const savedUser = localStorage.getItem("novaMegaG_currentUser");
             if (savedUser) {
                 currentUser = JSON.parse(savedUser);
                 initAppSession();
             }
 
-            usersList = JSON.parse(localStorage.getItem("novaMegaG_usersList") || "[]");
-            maintenances = JSON.parse(localStorage.getItem("novaMegaG_maintenances") || "[]");
+            // Sincronizar utilizadores e dados da nuvem
+            setTimeout(() => {
+                try {
+                    const usersRef = window.FB_RTDB.ref(window.FB_RTDB.db, 'users');
+                    window.FB_RTDB.onValue(usersRef, (snapshot) => {
+                        const data = snapshot.val();
+                        usersList = [];
+                        if (data) {
+                            Object.keys(data).forEach(k => usersList.push(data[k]));
+                        }
+                    });
+                } catch(e) { console.log(e); }
+            }, 500);
 
-            // Login
             document.getElementById("loginForm").addEventListener("submit", (e) => {
                 e.preventDefault();
                 const email = document.getElementById("loginEmail").value.trim().toLowerCase();
@@ -270,24 +307,28 @@
                 }
             });
 
-            // Cadastro
-            document.getElementById("registerForm").addEventListener("submit", (e) => {
+            document.getElementById("registerForm").addEventListener("submit", async (e) => {
                 e.preventDefault();
                 const name = document.getElementById("regName").value.trim();
                 const email = document.getElementById("regEmail").value.trim();
                 const pass = document.getElementById("regPassword").value;
                 const role = document.getElementById("regRole").value;
 
-                usersList.push({ name, email, pass, role });
-                localStorage.setItem("novaMegaG_usersList", JSON.stringify(usersList));
+                const newUser = { name, email, pass, role };
 
-                alert("Cadastro realizado com sucesso! Faça login com sua conta.");
-                document.getElementById("registerForm").reset();
-                toggleRegisterMode();
+                try {
+                    const usersRef = window.FB_RTDB.ref(window.FB_RTDB.db, 'users');
+                    const newRef = window.FB_RTDB.push(usersRef);
+                    await window.FB_RTDB.set(newRef, newUser);
+                    alert("Cadastro realizado com sucesso! Faça login com sua conta.");
+                    document.getElementById("registerForm").reset();
+                    toggleRegisterMode();
+                } catch (err) {
+                    alert("Erro ao cadastrar na nuvem: " + err.message);
+                }
             });
 
-            // Envio de Manutenção
-            document.getElementById("maintenanceForm").addEventListener("submit", (e) => {
+            document.getElementById("maintenanceForm").addEventListener("submit", async (e) => {
                 e.preventDefault();
                 const truck = document.getElementById("mTruck").value.toUpperCase();
                 const km = document.getElementById("mKm").value;
@@ -296,7 +337,6 @@
                 const desc = document.getElementById("mDesc").value;
 
                 const newRecord = {
-                    id: 'm_' + Date.now(),
                     truck,
                     km,
                     fuel,
@@ -309,11 +349,15 @@
                     date: new Date().toLocaleString('pt-BR')
                 };
 
-                maintenances.unshift(newRecord);
-                localStorage.setItem("novaMegaG_maintenances", JSON.stringify(maintenances));
-                document.getElementById("maintenanceForm").reset();
-                renderApp();
-                alert("Relatório de manutenção registrado com sucesso!");
+                try {
+                    const dbRef = window.FB_RTDB.ref(window.FB_RTDB.db, 'maintenances');
+                    const newPostRef = window.FB_RTDB.push(dbRef);
+                    await window.FB_RTDB.set(newPostRef, newRecord);
+                    document.getElementById("maintenanceForm").reset();
+                    alert("Relatório enviado para a nuvem com sucesso!");
+                } catch (err) {
+                    alert("Erro ao enviar: " + err.message);
+                }
             });
         });
 
@@ -341,12 +385,27 @@
                 document.getElementById("adminView").classList.add("hidden");
             }
 
-            renderApp();
+            listenToDatabase();
         }
 
         function logout() {
             localStorage.removeItem("novaMegaG_currentUser");
             location.reload();
+        }
+
+        function listenToDatabase() {
+            const dbRef = window.FB_RTDB.ref(window.FB_RTDB.db, 'maintenances');
+            window.FB_RTDB.onValue(dbRef, (snapshot) => {
+                const data = snapshot.val();
+                maintenances = [];
+                if (data) {
+                    Object.keys(data).forEach(key => {
+                        maintenances.push({ id: key, ...data[key] });
+                    });
+                    maintenances.reverse();
+                }
+                renderApp();
+            });
         }
 
         function renderApp() {
@@ -430,23 +489,20 @@
             return 'bg-gray-100 text-gray-700';
         }
 
-        function updateStatus(id, newStatus) {
-            const item = maintenances.find(m => m.id === id);
-            if (item) {
-                item.status = newStatus;
-                localStorage.setItem("novaMegaG_maintenances", JSON.stringify(maintenances));
-                renderApp();
-            }
+        async function updateStatus(id, newStatus) {
+            try {
+                const itemRef = window.FB_RTDB.ref(window.FB_RTDB.db, `maintenances/${id}`);
+                await window.FB_RTDB.update(itemRef, { status: newStatus });
+            } catch(e) { alert("Erro ao atualizar status: " + e.message); }
         }
 
-        function addNotes(id) {
-            const item = maintenances.find(m => m.id === id);
-            if (!item) return;
-            const currentNotes = prompt("Digite a observação da gestão para este veículo:", item.notes || "");
+        async function addNotes(id) {
+            const currentNotes = prompt("Digite a observação da gestão para este veículo:");
             if (currentNotes !== null) {
-                item.notes = currentNotes;
-                localStorage.setItem("novaMegaG_maintenances", JSON.stringify(maintenances));
-                renderApp();
+                try {
+                    const itemRef = window.FB_RTDB.ref(window.FB_RTDB.db, `maintenances/${id}`);
+                    await window.FB_RTDB.update(itemRef, { notes: currentNotes });
+                } catch(e) { alert("Erro ao adicionar nota: " + e.message); }
             }
         }
 
