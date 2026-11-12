@@ -284,7 +284,7 @@
                 initAppSession();
             }
 
-            // Sincronizar utilizadores e dados da nuvem
+            // Sincronizar utilizadores do Firebase
             setTimeout(() => {
                 try {
                     const usersRef = window.FB_RTDB.ref(window.FB_RTDB.db, 'users');
@@ -438,75 +438,4 @@
                 }
 
                 listEl.innerHTML = myItems.map(item => `
-                    <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                        <div>
-                            <div class="flex items-center gap-2 mb-1">
-                                <span class="font-bold text-gray-800 text-sm">Veículo: ${item.truck}</span>
-                                <span class="px-2 py-0.5 text-xs rounded-full font-semibold ${getStatusBadge(item.status)}">${item.status}</span>
-                            </div>
-                            <p class="text-xs text-gray-600"><strong>Problema:</strong> ${item.desc}</p>
-                            <p class="text-xs text-gray-500 mt-1"><strong>Destino:</strong> ${item.destination || 'Não informado'} | <strong>Orçamento:</strong> ${item.budgetStatus || 'Pendente'}</p>
-                            <p class="text-xs text-gray-500">KM: ${item.km} | Abastecimento: ${item.fuel} | Urgência: ${item.urgency}</p>
-                            ${item.notes ? `<p class="text-xs text-red-600 mt-1 bg-red-50 p-1.5 rounded"><strong>Nota da Gestão:</strong> ${item.notes}</p>` : ''}
-                        </div>
-                        <span class="text-xs text-gray-400 whitespace-nowrap">${item.date}</span>
-                    </div>
-                `).join('');
-
-            } else {
-                const tableEl = document.getElementById("adminMaintenanceTable");
-                const filtered = maintenances.filter(m => 
-                    (m.truck && m.truck.toLowerCase().includes(filterText)) || 
-                    (m.driverName && m.driverName.toLowerCase().includes(filterText)) ||
-                    (m.destination && m.destination.toLowerCase().includes(filterText)) ||
-                    (m.desc && m.desc.toLowerCase().includes(filterText))
-                );
-
-                document.getElementById("statTotal").innerText = maintenances.length;
-                document.getElementById("statPending").innerText = maintenances.filter(m => m.status === 'Pendente').length;
-                document.getElementById("statProgress").innerText = maintenances.filter(m => m.status === 'Em Manutenção').length;
-                document.getElementById("statDone").innerText = maintenances.filter(m => m.status === 'Concluído').length;
-
-                if (filtered.length === 0) {
-                    tableEl.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-gray-400 text-xs">Nenhum registro encontrado.</td></tr>`;
-                    return;
-                }
-
-                tableEl.innerHTML = filtered.map(item => `
-                    <tr class="hover:bg-gray-50">
-                        <td class="p-3">
-                            <p class="font-semibold text-gray-900">${item.driverName || 'Motorista'}</p>
-                            <p class="text-xs text-gray-400">${item.date}</p>
-                        </td>
-                        <td class="p-3 font-bold text-gray-800">${item.truck}<br><span class="text-xs font-normal text-gray-500">${item.km} KM</span></td>
-                        <td class="p-3 text-xs">
-                            <p class="font-semibold text-gray-700"><i class="fa-solid fa-location-dot text-red-500 mr-1"></i>${item.destination || 'N/A'}</p>
-                            <p class="text-gray-500"><i class="fa-solid fa-calculator text-blue-500 mr-1"></i>${item.budgetStatus || 'N/A'}</p>
-                        </td>
-                        <td class="p-3 text-xs">
-                            <p class="text-gray-700">${item.fuel}</p>
-                            <span class="inline-block mt-1 px-2 py-0.5 text-xs rounded font-semibold ${getUrgencyBadge(item.urgency)}">${item.urgency}</span>
-                        </td>
-                        <td class="p-3 text-xs max-w-xs truncate" title="${item.desc}">${item.desc}</td>
-                        <td class="p-3"><span class="px-2.5 py-1 text-xs rounded-full font-bold ${getStatusBadge(item.status)}">${item.status}</span></td>
-                        <td class="p-3 text-right space-y-1">
-                            <select onchange="updateStatus('${item.id}', this.value)" class="text-xs border rounded p-1 bg-white">
-                                <option value="Pendente" ${item.status === 'Pendente' ? 'selected' : ''}>Pendente</option>
-                                <option value="Em Manutenção" ${item.status === 'Em Manutenção' ? 'selected' : ''}>Em Manutenção</option>
-                                <option value="Concluído" ${item.status === 'Concluído' ? 'selected' : ''}>Concluído</option>
-                            </select>
-                            <button onclick="addNotes('${item.id}')" class="block ml-auto text-xs text-blue-600 hover:underline">Adicionar Nota</button>
-                        </td>
-                    </tr>
-                `).join('');
-            }
-        }
-
-        function getStatusBadge(status) {
-            if (status === 'Pendente') return 'bg-yellow-100 text-yellow-800';
-            if (status === 'Em Manutenção') return 'bg-orange-100 text-orange-800';
-            return 'bg-green-100 text-green-800';
-        }
-
-        function getUrgencyBadge(urgency) {
-            if (urgency && urgency.includes('Alta'))
+                    <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap
